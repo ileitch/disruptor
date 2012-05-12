@@ -8,6 +8,7 @@ module Disruptor
       @buffer = RingBuffer.new(size)
       @sequence = Sequence.new
       @barrier = ProcessorBarrier.new(@buffer)
+      @poppers = {}
     end
 
     def push(obj)
@@ -17,13 +18,14 @@ module Disruptor
     end
 
     def pop
-      if !Thread.current[:processor]
-        processor = Popper.new
-        processor.setup(@buffer, @barrier, @sequence)
-        Thread.current[:processor] = processor
+      if popper = @poppers[Thread.__id__]
+        popper.next_event
+      else
+        popper = Disruptor::Popper.new
+        popper.setup(@buffer, @barrier, @sequence)
+        @poppers[Thread.__id__] = popper
+        popper.next_event
       end
-
-      Thread.current[:processor].next_event
     end
   end
 end
