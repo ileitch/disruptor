@@ -21,7 +21,7 @@ module Disruptor
   #
   class RingBuffer
     INITIAL_CURSOR_VALUE = -1
-    INITIAL_NEXT_VALUE = 0 # TODO: Should be -1
+    INITIAL_NEXT_VALUE = 0
 
     attr_reader :cursor, :next
 
@@ -41,14 +41,14 @@ module Disruptor
     end
 
     def commit(seq)
-      if @cursor.get == INITIAL_CURSOR_VALUE && seq == 0
+      if @cursor.get == INITIAL_CURSOR_VALUE && seq == INITIAL_NEXT_VALUE
         prev_slot = INITIAL_CURSOR_VALUE
       else
-        prev_slot = (seq - 1) % @size
+        prev_slot = (seq - 1)
       end
 
       wait_for_cursor(prev_slot)
-      @cursor.set(seq % @size)
+      @cursor.set(seq)
     end
 
     def set(seq, event)

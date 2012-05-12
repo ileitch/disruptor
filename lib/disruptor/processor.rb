@@ -22,21 +22,17 @@ module Disruptor
       @running
     end
 
-    def next_event
-      next_sequence = @sequence.increment
-      @barrier.wait_for(next_sequence)
-      @buffer.get(next_sequence)
-    end
-
     def start
       @thread = Thread.new do
         @running = true
         while running?
+          next_sequence = @sequence.increment
           begin
-            event = next_event
+            @barrier.wait_for(next_sequence)
           rescue Stop
             break
           end
+          event = @buffer.get(next_sequence)
           process_event(event)
         end
       end

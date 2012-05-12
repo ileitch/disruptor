@@ -8,11 +8,10 @@ module Disruptor
   # 
   class ProcessorPool
     def initialize(buffer)
-      @sequence = Sequence.new
+      @sequence = Sequence.new(Disruptor::RingBuffer::INITIAL_NEXT_VALUE)
       @buffer = buffer
       @barrier = ProcessorBarrier.new(@buffer)
       @processors = []
-      @threads = []
     end
 
     def add(processor)
