@@ -1,7 +1,7 @@
 module Disruptor
   #
   # Include this class into your event processors.
-  # Your event handler must implement process_event(event).
+  # Your processor must implement process_event(event).
   #
   module Processor
     class Stop < StandardError; end
@@ -22,17 +22,21 @@ module Disruptor
       @running
     end
 
+    def next_event
+      next_sequence = @sequence.increment
+      @barrier.wait_for(next_sequence)
+      @buffer.get(next_sequence)
+    end
+
     def start
       @thread = Thread.new do
         @running = true
         while running?
-          next_sequence = @sequence.increment
           begin
-            @barrier.wait_for(next_sequence)
+            event = next_event
           rescue Stop
             break
           end
-          event = @buffer.get(next_sequence)
           process_event(event)
         end
       end

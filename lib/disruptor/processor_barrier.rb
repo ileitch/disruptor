@@ -21,7 +21,6 @@ module Disruptor
       @buffer = buffer
     end
 
-    # TODO: Any unwanted side-effects from using thread local storage?
     def processor_stopping
       @processor_stopping = true
     end

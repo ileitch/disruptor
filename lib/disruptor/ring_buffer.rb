@@ -21,6 +21,7 @@ module Disruptor
   #
   class RingBuffer
     INITIAL_CURSOR_VALUE = -1
+    INITIAL_NEXT_VALUE = 0 # TODO: Should be -1
 
     attr_reader :cursor, :next
 
@@ -31,7 +32,7 @@ module Disruptor
 
       @size = size
       @cursor = Sequence.new(INITIAL_CURSOR_VALUE)
-      @next = Sequence.new
+      @next = Sequence.new(INITIAL_NEXT_VALUE)
       @buffer = Array.new(@size, &blk)
     end
 
