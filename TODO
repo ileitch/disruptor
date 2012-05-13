@@ -2,4 +2,3 @@
 * Implement different processor wait strategies.
 * Implement different publisher claim strategies.
 * Implement cache-line padding (possible on MRI, Rubinius?).
-* Support the Batch Effect (See LMAX white paper).

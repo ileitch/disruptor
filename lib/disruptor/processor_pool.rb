@@ -3,8 +3,8 @@ module Disruptor
   # This class implements a collection of Processors that share a CAS 
   # protected incremental sequence.
   #
-  # Processors request slots in a gated fashion. Processors A, B, C ... 
-  # will never contend for the same slot in the buffer.
+  # Processors request slots from the buffer in a gated fashion.
+  # Processors A, B, C ... will never contend for the same slot in the buffer.
   # 
   class ProcessorPool
     def initialize(buffer)

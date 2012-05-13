@@ -19,6 +19,7 @@ module Disruptor
   class ProcessorBarrier
     def initialize(buffer)
       @buffer = buffer
+      @last_known_cursor = Disruptor::RingBuffer::INITIAL_CURSOR_VALUE
     end
 
     def processor_stopping
@@ -26,13 +27,20 @@ module Disruptor
     end
 
     def wait_for(sequence)
+      # Avoid hitting the Sequence#get memory barrier if we already know the cursor
+      # is ahead of the requested sequence. 
+      return if sequence <= @last_known_cursor
+
       while true
         if @processor_stopping
           @processor_stopping = false
           raise Disruptor::Processor::Stop
         end
 
-        break if sequence <= @buffer.cursor.get
+        if sequence <= @buffer.cursor.get
+          @last_known_cursor = @buffer.cursor.get
+          break
+        end
       end
     end
   end

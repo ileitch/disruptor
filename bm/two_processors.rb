@@ -24,10 +24,10 @@ Benchmark.bm(width) do |x|
     threads.map(&:join)
   end
 
-  # x.report('    queue:') do
-  #   threads = []
-  #   threads << Thread.new { (n / 2).times { queue.pop } }
-  #   threads << Thread.new { (n / 2).times { queue.pop } }
-  #   threads.map(&:join)
-  # end
+  x.report('    queue:') do
+    threads = []
+    threads << Thread.new { (n / 2).times { queue.pop } }
+    threads << Thread.new { (n / 2).times { queue.pop } }
+    threads.map(&:join)
+  end
 end
