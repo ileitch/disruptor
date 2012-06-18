@@ -16,7 +16,7 @@ describe Disruptor::Processor do
   end
 end
 
-describe Disruptor::Processor, 'start' do
+describe Disruptor::Processor, 'process_next_sequence' do
   class MyProcessor
     include Disruptor::Processor
     attr_accessor :processed_event
@@ -35,26 +35,22 @@ describe Disruptor::Processor, 'start' do
 
   it 'increments the sequence' do
     sequence.should_receive(:increment)
-    processor.start
-    processor.stop
+    processor.process_next_sequence
   end
 
   it 'waits for the next sequence' do
     barrier.should_receive(:wait_for).with(10)
-    processor.start
-    processor.stop
+    processor.process_next_sequence
   end
 
   it 'gets the event for the sequence' do
     buffer.should_receive(:get).with(10)
-    processor.start
-    processor.stop
+    processor.process_next_sequence
   end
 
   it 'disptachers the event processor' do
     expect do
-      processor.start
-      processor.stop
+      processor.process_next_sequence
     end.to change(processor, :processed_event).from(nil).to(event)
   end
 end
@@ -66,10 +62,14 @@ describe Disruptor::Processor, 'stop' do
     c
   end
 
+  let(:thread) { stub }
   let(:processor) { processor_subclass.new }
   let(:barrier) { stub(:processor_stopping => nil) }
 
-  before { processor.setup(nil, barrier, nil) }
+  before do
+    processor.setup(nil, barrier, nil)
+    Thread.stub(:new => thread)
+  end
 
   it 'notifies the barrier to abort the waiting for a sequence' do
     barrier.should_receive(:processor_stopping)
@@ -81,5 +81,9 @@ describe Disruptor::Processor, 'stop' do
     processor.running?.should be_false
   end
 
-  it 'joins the thread'
+  it 'joins the thread' do
+    processor.start
+    thread.should_receive(:join)
+    processor.stop
+  end
 end

@@ -32,7 +32,7 @@ end
 
 describe Disruptor::RingBuffer, 'commit' do
   let(:buffer) { Disruptor::RingBuffer.new(12) }
-  let(:cursor) { stub(:set => nil, :get => 0) }
+  let(:cursor) { stub(:set => nil, :get => Disruptor::RingBuffer::INITIAL_CURSOR_VALUE) }
 
   before do
     Disruptor::Sequence.stub(:new => cursor)
@@ -40,18 +40,24 @@ describe Disruptor::RingBuffer, 'commit' do
   end
 
   it 'waits for the cursor to reach the previous slot' do
-    buffer.should_receive(:wait_for_cursor).with(3)
+    cursor.stub(:get => 0)
+    buffer.should_receive(:wait_for_cursor).with(15)
     buffer.commit(16)
   end
 
   it 'sets the cursor to the current slot' do
-    cursor.should_receive(:set).with(4)
+    cursor.stub(:get => 0)
+    cursor.should_receive(:set).with(16)
     buffer.commit(16)
   end
 
-  it 'sets the cursor to 0 if this is the first commit' do
-    cursor.stub(:get => Disruptor::RingBuffer::INITIAL_CURSOR_VALUE)
+  it 'sets the cursor to 0 for the first commit' do
     cursor.should_receive(:set).with(0)
+    buffer.commit(0)
+  end
+
+  it 'does not wait for the cursor for the first commit into the buffer' do
+    buffer.should_not_receive(:wait_for_cursor)
     buffer.commit(0)
   end
 end

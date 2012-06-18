@@ -26,16 +26,20 @@ module Disruptor
       @thread = Thread.new do
         @running = true
         while running?
-          next_sequence = @sequence.increment
           begin
-            @barrier.wait_for(next_sequence)
+            process_next_sequence
           rescue Stop
             break
           end
-          event = @buffer.get(next_sequence)
-          process_event(event)
         end
       end
+    end
+
+    def process_next_sequence
+      next_sequence = @sequence.increment
+      @barrier.wait_for(next_sequence)
+      event = @buffer.get(next_sequence)
+      process_event(event)
     end
 
     def stop

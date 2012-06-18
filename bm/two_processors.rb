@@ -1,5 +1,3 @@
-#!/Users/ian/Projects/rubinius/bin/ruby
-
 $:.unshift(File.expand_path(File.dirname(__FILE__) + '/../lib'))
 require 'disruptor'
 require 'benchmark'

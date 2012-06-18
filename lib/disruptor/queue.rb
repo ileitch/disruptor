@@ -1,4 +1,7 @@
 module Disruptor
+  #
+  # A simple n-reader, n-writer queue.
+  #
   class Queue
     def initialize(size)
       @buffer = RingBuffer.new(size)

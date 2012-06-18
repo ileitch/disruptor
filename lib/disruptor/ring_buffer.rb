@@ -41,24 +41,19 @@ module Disruptor
     end
 
     def commit(seq)
-      if @cursor.get == INITIAL_CURSOR_VALUE && seq == INITIAL_NEXT_VALUE
-        prev_slot = INITIAL_CURSOR_VALUE
-      else
-        prev_slot = (seq - 1)
+      if @cursor.get != INITIAL_CURSOR_VALUE && seq != INITIAL_NEXT_VALUE
+        wait_for_cursor(seq - 1)
       end
 
-      wait_for_cursor(prev_slot)
       @cursor.set(seq)
     end
 
     def set(seq, event)
-      slot = seq % @size
-      @buffer[slot] = event
+      @buffer[seq % @size] = event
     end
 
     def get(seq)
-      slot = seq % @size
-      @buffer[slot]
+      @buffer[seq % @size]
     end
 
     private
