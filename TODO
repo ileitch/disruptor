@@ -1,4 +1,0 @@
-* Detect if the buffer is full, have the publishers wait.
-* Implement different processor wait strategies.
-* Implement different publisher claim strategies.
-* Implement cache-line padding (possible on MRI, Rubinius?).
