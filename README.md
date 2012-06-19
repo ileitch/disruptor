@@ -2,7 +2,7 @@
 
 # The LMAX Disruptor in Ruby.
 
-I lied. This isn't the full Disruptor. The reference Java implementation is more of a framework than a pattern. I have simply taken the core concepts of the Disruptor. This implementation does not support multiple claim and wait strategies (yet?).
+The reference Java implementation is more of a framework than a pattern. I have simply taken the core concepts of the Disruptor. This implementation does not support multiple claim and wait strategies (yet?).
 
 The code may serve as a handy companion for Ruby developers digging into the [Disruptor Technical Paper](http://disruptor.googlecode.com/files/Disruptor-1.0.pdf).
 
