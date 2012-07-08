@@ -4,6 +4,7 @@ end
 
 require 'atomic'
 
+require 'disruptor/busy_spin_wait_strategy'
 require 'disruptor/ring_buffer'
 require 'disruptor/sequence'
 require 'disruptor/processor'

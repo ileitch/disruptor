@@ -6,9 +6,17 @@ The reference Java implementation is more of a framework than a pattern. I have 
 
 The code may serve as a handy companion for Ruby developers digging into the [Disruptor Technical Paper](http://disruptor.googlecode.com/files/Disruptor-1.0.pdf).
 
-What I have implemented here is somewhat analogous to a busy spin wait strategy, multi-threaded claim strategy configuration. 
+What I have implemented here is somewhat analogous to a busy spin wait strategy, multi-threaded claim strategy configuration.
 
 There is a simple Queue implementation, if you're after a lock-free queue.
+
+## Wait Strategies
+
+* BusySpinWaitStrategy - The default. Spins until the sequence reaches the required value. CPU intensive but provides best throughput and latency. Do not use if there are more threads than logical CPU cores.
+
+```
+buffer = Disruptor::RingBuffer.new(20, BusySpinWaitStrategy.new)
+```
 
 ## Cache-line Padding
 

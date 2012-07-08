@@ -1,5 +1,11 @@
 require 'spec_helper'
 
+module Disruptor
+  class TestWaitStrategy
+    def wait_for(sequence, slot); end
+  end
+end
+
 describe Disruptor::RingBuffer do
   let(:buffer) { Disruptor::RingBuffer.new(32) }
 
@@ -15,7 +21,7 @@ describe Disruptor::RingBuffer do
 end
 
 describe Disruptor::RingBuffer, 'claim' do
-  let(:buffer) { Disruptor::RingBuffer.new(20) }
+  let(:buffer) { Disruptor::RingBuffer.new(20, Disruptor::TestWaitStrategy.new) }
 
   it 'returns the next sequence' do
     buffer.claim.should == 0
@@ -31,17 +37,17 @@ describe Disruptor::RingBuffer, 'claim' do
 end
 
 describe Disruptor::RingBuffer, 'commit' do
-  let(:buffer) { Disruptor::RingBuffer.new(12) }
+  let(:wait_strategy) { stub(:wait_for => nil) }
+  let(:buffer) { Disruptor::RingBuffer.new(12, wait_strategy) }
   let(:cursor) { stub(:set => nil, :get => Disruptor::RingBuffer::INITIAL_CURSOR_VALUE) }
 
   before do
     Disruptor::Sequence.stub(:new => cursor)
-    buffer.stub(:wait_for_cursor)
   end
 
   it 'waits for the cursor to reach the previous slot' do
     cursor.stub(:get => 0)
-    buffer.should_receive(:wait_for_cursor).with(15)
+    wait_strategy.should_receive(:wait_for).with(cursor, 15)
     buffer.commit(16)
   end
 
@@ -57,7 +63,7 @@ describe Disruptor::RingBuffer, 'commit' do
   end
 
   it 'does not wait for the cursor for the first commit into the buffer' do
-    buffer.should_not_receive(:wait_for_cursor)
+    wait_strategy.should_not_receive(:wait_for)
     buffer.commit(0)
   end
 end

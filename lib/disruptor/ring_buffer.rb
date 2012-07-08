@@ -25,12 +25,13 @@ module Disruptor
 
     attr_reader :cursor, :next
 
-    def initialize(size, &blk)
+    def initialize(size, wait_strategy = BusySpinWaitStrategy.new, &blk)
       if size % 2 == 1
         raise BufferSizeError, 'Buffer size must be a power of two.'
       end
 
       @size = size
+      @wait_strategy = wait_strategy
       @cursor = Sequence.new(INITIAL_CURSOR_VALUE)
       @next = Sequence.new(INITIAL_NEXT_VALUE)
       @buffer = Array.new(@size, &blk)
@@ -42,7 +43,7 @@ module Disruptor
 
     def commit(seq)
       if @cursor.get != INITIAL_CURSOR_VALUE && seq != INITIAL_NEXT_VALUE
-        wait_for_cursor(seq - 1)
+        @wait_strategy.wait_for(@cursor, seq - 1)
       end
 
       @cursor.set(seq)
@@ -58,12 +59,6 @@ module Disruptor
 
     def claimed_count
       @next.get - @cursor.get - 1
-    end
-
-    private
-
-    def wait_for_cursor(slot)
-      while @cursor.get != slot; end
     end
   end
 end
