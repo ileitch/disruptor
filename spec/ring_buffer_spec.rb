@@ -15,18 +15,18 @@ describe Disruptor::RingBuffer do
 end
 
 describe Disruptor::RingBuffer, 'claim' do
-  let(:buffer) { Disruptor::RingBuffer.new(2) }
-  let(:sequence) { stub(:increment => 6) }
-
-  before { Disruptor::Sequence.stub(:new => sequence) }
-
-  it 'increments the next pointer' do
-    sequence.should_receive(:increment)
-    buffer.claim
-  end
+  let(:buffer) { Disruptor::RingBuffer.new(20) }
 
   it 'returns the next sequence' do
-    buffer.claim.should == 6
+    buffer.claim.should == 0
+    buffer.claim.should == 1
+    buffer.claim.should == 2
+  end
+
+  it 'returns the number of claimed slots' do
+    5.times { buffer.claim }
+    2.times { |i| buffer.commit(i) }
+    buffer.claimed_count.should == 3
   end
 end
 

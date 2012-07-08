@@ -56,6 +56,10 @@ module Disruptor
       @buffer[seq % @size]
     end
 
+    def claimed_count
+      @next.get - @cursor.get - 1
+    end
+
     private
 
     def wait_for_cursor(slot)
