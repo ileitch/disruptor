@@ -18,14 +18,9 @@ module Disruptor
       @sequence = sequence
     end
 
-    def running?
-      @running
-    end
-
     def start
       @thread = Thread.new do
-        @running = true
-        while running?
+        loop do
           begin
             process_next_sequence
           rescue Stop
@@ -39,12 +34,15 @@ module Disruptor
       next_sequence = @sequence.increment
       @barrier.wait_for(next_sequence)
       event = @buffer.get(next_sequence)
+      raise event if event == Stop
       process_event(event)
     end
 
     def stop
-      @running = false
-      @barrier.processor_stopping
+      seq = @buffer.claim
+      @buffer.set(seq, Stop)
+      @buffer.commit(seq)
+
       @thread.join if @thread
     end
 

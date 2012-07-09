@@ -6,7 +6,7 @@ module Disruptor
   # Processors ask the barrier for the next sequence they want, the barrier
   # spins waiting for the sequence to become available.
   # This is achieved without CAS as the buffer's cursor is protected by a
-  # read memory barrier.
+  # memory barrier.
   #
   #           <- claimed ->
   # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -17,31 +17,22 @@ module Disruptor
   # the processors.
   #
   class ProcessorBarrier
-    def initialize(buffer)
+    def initialize(buffer, wait_strategy)
       @buffer = buffer
-      @last_known_cursor = Disruptor::RingBuffer::INITIAL_CURSOR_VALUE
-    end
-
-    def processor_stopping
-      @processor_stopping = true
+      @wait_strategy = wait_strategy
+      @last_known_sequence = Disruptor::RingBuffer::INITIAL_CURSOR_VALUE
     end
 
     def wait_for(sequence)
-      # Avoid hitting the Sequence#get memory barrier if we already know the cursor
-      # is ahead of the requested sequence. 
-      return if sequence <= @last_known_cursor
+      # Optimization:
+      # Store the last known cursor value in local memory to avoid
+      # going down into the primitive Sequence#get.
+      return if sequence < @last_known_sequence
 
-      while true
-        if @processor_stopping
-          @processor_stopping = false
-          raise Disruptor::Processor::Stop
-        end
+      @wait_strategy.wait_for(@buffer.cursor, sequence)
 
-        if sequence <= @buffer.cursor.get
-          @last_known_cursor = @buffer.cursor.get
-          break
-        end
-      end
+      # TODO: Candidate for cache-line padding?
+      @last_known_sequence = @buffer.cursor.get
     end
   end
 end

@@ -1,21 +1,15 @@
 require 'spec_helper'
 
-module Disruptor
-  class TestWaitStrategy < WaitStrategy
-    def wait_for(sequence, slot); end
-  end
-end
-
 describe Disruptor::RingBuffer do
-  let(:buffer) { Disruptor::RingBuffer.new(32) }
+  let(:buffer) { Disruptor::RingBuffer.new(32, Disruptor::TestWaitStrategy.new) }
 
   it 'raises an error when initialized with a size that is not a power of two' do
-    expect { Disruptor::RingBuffer.new(31) }.should raise_error(Disruptor::BufferSizeError)
+    expect { Disruptor::RingBuffer.new(31, Disruptor::TestWaitStrategy.new) }.should raise_error(Disruptor::BufferSizeError)
   end
 
   it 'accepts a block to preallocate the buffer' do
     event = stub
-    buffer = Disruptor::RingBuffer.new(6) { |slot| event }
+    buffer = Disruptor::RingBuffer.new(6, Disruptor::TestWaitStrategy.new) { |slot| event }
     buffer.get(0).should == event
   end
 end
@@ -74,7 +68,7 @@ describe Disruptor::RingBuffer, 'commit' do
 end
 
 describe Disruptor::RingBuffer, 'get/set' do
-  let(:buffer) { Disruptor::RingBuffer.new(12) }
+  let(:buffer) { Disruptor::RingBuffer.new(12, Disruptor::TestWaitStrategy.new) }
   let(:event) { stub }
 
   it 'returns the event for the given seq' do

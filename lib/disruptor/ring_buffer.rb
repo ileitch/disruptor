@@ -25,7 +25,7 @@ module Disruptor
 
     attr_reader :cursor, :next
 
-    def initialize(size, wait_strategy = BusySpinWaitStrategy.new, &blk)
+    def initialize(size, wait_strategy, &blk)
       if size % 2 == 1
         raise BufferSizeError, 'Buffer size must be a power of two.'
       end

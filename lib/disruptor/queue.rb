@@ -3,10 +3,10 @@ module Disruptor
   # A simple n-reader, n-writer queue.
   #
   class Queue
-    def initialize(size)
-      @buffer = RingBuffer.new(size)
+    def initialize(size, wait_strategy)
+      @buffer = RingBuffer.new(size, wait_strategy)
       @sequence = Sequence.new
-      @barrier = ProcessorBarrier.new(@buffer)
+      @barrier = ProcessorBarrier.new(@buffer, wait_strategy)
     end
 
     def push(obj)

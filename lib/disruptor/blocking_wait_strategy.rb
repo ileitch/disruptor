@@ -16,8 +16,8 @@ module Disruptor
       @cond = ConditionVariable.new
     end
 
-    def wait_for(sequence, slot)
-      while sequence.get != slot
+    def wait_for(cursor, sequence)
+      while cursor.get < sequence
         @mutex.synchronize { @cond.wait(@mutex) }
       end
     end

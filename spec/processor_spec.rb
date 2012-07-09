@@ -48,7 +48,7 @@ describe Disruptor::Processor, 'process_next_sequence' do
     processor.process_next_sequence
   end
 
-  it 'disptachers the event processor' do
+  it 'dispatches the event processor' do
     expect do
       processor.process_next_sequence
     end.to change(processor, :processed_event).from(nil).to(event)
@@ -62,23 +62,30 @@ describe Disruptor::Processor, 'stop' do
     c
   end
 
+  let(:buffer) { stub(:claim => nil, :set => nil, :commit => nil) }
   let(:thread) { stub }
   let(:processor) { processor_subclass.new }
   let(:barrier) { stub(:processor_stopping => nil) }
 
   before do
-    processor.setup(nil, barrier, nil)
+    processor.setup(buffer, barrier, nil)
     Thread.stub(:new => thread)
   end
 
-  it 'notifies the barrier to abort the waiting for a sequence' do
-    barrier.should_receive(:processor_stopping)
+  it 'claims a slot in the buffer for the Stop instruction' do
+    buffer.should_receive(:claim)
     processor.stop
   end
 
-  it 'changes the running? status to false' do
+  it 'adds a Stop instruction into the buffer' do
+    buffer.stub(:claim => 1)
+    buffer.should_receive(:set).with(1, Disruptor::Processor::Stop)
     processor.stop
-    processor.running?.should be_false
+  end
+
+  it 'commits the Stop instruction in the buffer' do
+    buffer.should_receive(:commit)
+    processor.stop
   end
 
   it 'joins the thread' do

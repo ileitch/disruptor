@@ -8,8 +8,8 @@ module Disruptor
   # number of logical cores.
   #
   class BusySpinWaitStrategy < WaitStrategy
-    def wait_for(sequence, slot)
-      while sequence.get != slot; end
+    def wait_for(cursor, sequence)
+      while cursor.get < sequence; end
     end
   end
 end

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Disruptor::ProcessorPool, 'add' do
   let(:buffer) { stub }
-  let(:pool) { Disruptor::ProcessorPool.new(buffer) }
+  let(:pool) { Disruptor::ProcessorPool.new(buffer, Disruptor::TestWaitStrategy.new) }
   let(:barrier) { stub }
   let(:sequence) { stub }
   let(:processor) { stub(:setup => nil, :start => nil) }
@@ -25,7 +25,7 @@ end
 
 describe Disruptor::ProcessorPool, 'drain' do
   let(:buffer) { stub }
-  let(:pool) { Disruptor::ProcessorPool.new(buffer) }
+  let(:pool) { Disruptor::ProcessorPool.new(buffer, Disruptor::TestWaitStrategy.new) }
   let(:processor) { stub(:setup => nil, :start => nil) }
 
   before { pool.add(processor) }

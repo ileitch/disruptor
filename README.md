@@ -10,7 +10,7 @@ There is a simple Queue implementation, if you're after a lock-free queue.
 
 ### Wait Strategies
 
-* `BusySpinWaitStrategy` - The default. Spins until the sequence reaches the required value. CPU intensive but provides best throughput and latency. Do not use if there are more threads than logical CPU cores.
+* `BusySpinWaitStrategy` - Spins until the sequence reaches the required value. CPU intensive but provides best throughput and latency. Do not use if there are more threads than logical CPU cores.
 * `BlockingWaitStrategy` - Puts waiting threads to sleep. Use this strategy if you have more threads than logical cores.
 
 ```
@@ -23,7 +23,7 @@ One neat optimization the LMAX developers have used is cache-line padding of the
 
 ### Benchmarks
 
-I'm not going to show any results here, because they're pretty meaningless. No Ruby implementation can get close to performance of the Java implementation. If you do want to use the Disruptor pattern in JRuby, you're probably better off writing an extension for the offical Disruptor.
+I'm not going to show any results here, because they're pretty meaningless. No Ruby implementation can get close to performance of the Java implementation. If you do want to use the Disruptor pattern in JRuby, you're probably better off writing an extension for the official Disruptor.
 
 Saying that, there are a couple of simple Queue benchmarks in `bm`.
 

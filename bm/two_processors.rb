@@ -7,7 +7,7 @@ width = 14
 n = 6_000_000
 
 Benchmark.bm(width) do |x|
-  disruptor = Disruptor::Queue.new(n)
+  disruptor = Disruptor::Queue.new(n, Disruptor::BusySpinWaitStrategy.new)
   queue = Queue.new
 
   n.times do
