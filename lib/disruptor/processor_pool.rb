@@ -12,6 +12,7 @@ module Disruptor
       @buffer = buffer
       @barrier = ProcessorBarrier.new(@buffer, wait_strategy)
       @processors = []
+      @buffer.processor_pool = self
     end
 
     def add(processor)
@@ -23,6 +24,10 @@ module Disruptor
     def drain
       @processors.map(&:stop)
       @processors = []
+    end
+
+    def min_sequence
+      @processors.map(&:processed_sequence).min
     end
   end
 end

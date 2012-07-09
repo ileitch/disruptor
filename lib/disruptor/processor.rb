@@ -12,6 +12,8 @@ module Disruptor
       end
     end
 
+    attr_reader :processed_sequence
+
     def setup(buffer, barrier, sequence)
       @buffer = buffer
       @barrier = barrier
@@ -35,7 +37,11 @@ module Disruptor
       @barrier.wait_for(next_sequence)
       event = @buffer.get(next_sequence)
       raise event if event == Stop
-      process_event(event)
+      begin
+        process_event(event)
+      ensure
+        @processed_sequence = next_sequence
+      end
     end
 
     def stop

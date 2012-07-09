@@ -23,7 +23,7 @@ module Disruptor
     INITIAL_CURSOR_VALUE = -1
     INITIAL_NEXT_VALUE = 0
 
-    attr_reader :cursor, :next
+    attr_reader :cursor, :next, :processor_pool
 
     def initialize(size, wait_strategy, &blk)
       if size % 2 == 1
@@ -38,7 +38,10 @@ module Disruptor
     end
 
     def claim
-      @next.increment
+      next_sequence = @next.increment
+      wrap = next_sequence - @size
+      while wrap > processor_pool.min_sequence; end
+      next_sequence
     end
 
     def commit(seq)
