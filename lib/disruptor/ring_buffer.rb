@@ -47,6 +47,7 @@ module Disruptor
       end
 
       @cursor.set(seq)
+      @wait_strategy.notify_blocked
     end
 
     def set(seq, event)

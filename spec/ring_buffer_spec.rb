@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Disruptor
-  class TestWaitStrategy
+  class TestWaitStrategy < WaitStrategy
     def wait_for(sequence, slot); end
   end
 end
@@ -37,7 +37,7 @@ describe Disruptor::RingBuffer, 'claim' do
 end
 
 describe Disruptor::RingBuffer, 'commit' do
-  let(:wait_strategy) { stub(:wait_for => nil) }
+  let(:wait_strategy) { stub(:wait_for => nil, :notify_blocked => nil) }
   let(:buffer) { Disruptor::RingBuffer.new(12, wait_strategy) }
   let(:cursor) { stub(:set => nil, :get => Disruptor::RingBuffer::INITIAL_CURSOR_VALUE) }
 
@@ -64,6 +64,11 @@ describe Disruptor::RingBuffer, 'commit' do
 
   it 'does not wait for the cursor for the first commit into the buffer' do
     wait_strategy.should_not_receive(:wait_for)
+    buffer.commit(0)
+  end
+
+  it 'notifies blocked publishers' do
+    wait_strategy.should_receive(:notify_blocked)
     buffer.commit(0)
   end
 end
