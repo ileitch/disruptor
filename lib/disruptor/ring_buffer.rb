@@ -46,7 +46,7 @@ module Disruptor
         @wait_strategy.wait_for(@cursor, seq - 1)
       end
 
-      @cursor.set(seq)
+      @cursor.set(seq - 1, seq)
       @wait_strategy.notify_blocked
     end
 

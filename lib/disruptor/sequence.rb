@@ -10,8 +10,8 @@ module Disruptor
       @sequence.get
     end
 
-    def set(value)
-      @sequence.set(value)
+    def set(current_seq, new_seq)
+      while !@sequence.compare_and_set(current_seq, new_seq); end
     end
 
     def increment
