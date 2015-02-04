@@ -7,6 +7,6 @@ describe Disruptor::Queue do
     t1 = Thread.new { queue.push(:data) }
     t2 = Thread.new { queue.pop }
     [t1, t2].map(&:join)
-    t2.value.should == :data
+    expect(t2.value).to eq(:data)
   end
 end

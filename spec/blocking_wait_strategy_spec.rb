@@ -1,26 +1,26 @@
 require 'spec_helper'
 
 describe Disruptor::BlockingWaitStrategy do
-  let(:mutex) { stub }
-  let(:condition) { stub(:broadcast => nil) }
+  let(:mutex) { double }
+  let(:condition) { double(:broadcast => nil) }
   let(:strategy) { Disruptor::BlockingWaitStrategy.new }
-  let(:sequence) { stub }
+  let(:sequence) { double }
 
   before do
-    mutex.stub(:synchronize).and_yield
-    Mutex.stub(:new => mutex)
-    ConditionVariable.stub(:new => condition)
+    allow(mutex).to receive(:synchronize).and_yield
+    allow(Mutex).to receive_messages(:new => mutex)
+    allow(ConditionVariable).to receive_messages(:new => condition)
   end
 
   it 'returns when the sequence value reaches the given slot' do
-    sequence.stub(:get => 1)
+    allow(sequence).to receive_messages(:get => 1)
     strategy.wait_for(sequence, 1)
   end
 
   it 'sleeps if the sequence has not reached the given slot'
 
   it 'notifies all blocked publishers' do
-    condition.should_receive(:broadcast)
+    expect(condition).to receive(:broadcast)
     strategy.notify_blocked
   end
 end
