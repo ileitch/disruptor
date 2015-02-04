@@ -29,7 +29,7 @@ Saying that, there are a couple of simple Queue benchmarks in `bm`.
 
 ### TODO
 
-* Detect buffer wrap (reach? :-p) around, have the publishers wait.
+* Detect buffer wrap around, have the publishers wait.
 * Implement different processor wait strategies.
 * Implement different publisher claim strategies.
 * Implement cache-line padding (possible on MRI, Rubinius?).
