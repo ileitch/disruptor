@@ -15,6 +15,7 @@ module Disruptor
       @buffer.commit(seq)
       nil
     end
+    alias_method :<<, :push
 
     def pop
       next_sequence = @sequence.increment
