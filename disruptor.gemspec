@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'disruptor/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'Disruptor'
+  spec.name          = 'disruptor'
   spec.version       = Disruptor::VERSION
   spec.authors       = ['Ian Leitch']
   spec.email         = ['port001@gmail.com']
