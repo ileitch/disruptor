@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    Disruptor (1.0.0.beta1)
+    disruptor (1.0.0.beta1)
 
 GEM
   remote: https://rubygems.org/
@@ -45,9 +45,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  Disruptor!
   bundler (~> 1.7)
   concurrent-ruby
+  disruptor!
   rake (~> 10.0)
   rspec
   rubocop
