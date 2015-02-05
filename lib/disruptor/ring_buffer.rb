@@ -59,5 +59,9 @@ module Disruptor
     def claimed_count
       @next.get - @cursor.get - 1
     end
+
+    def committed_count
+      @cursor.get + 1
+    end
   end
 end

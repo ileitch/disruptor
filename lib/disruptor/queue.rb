@@ -13,12 +13,17 @@ module Disruptor
       seq = @buffer.claim
       @buffer.set(seq, obj)
       @buffer.commit(seq)
+      nil
     end
 
     def pop
       next_sequence = @sequence.increment
       @barrier.wait_for(next_sequence)
       @buffer.get(next_sequence)
+    end
+
+    def size
+      @buffer.committed_count - @sequence.get
     end
   end
 end

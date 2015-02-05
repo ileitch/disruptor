@@ -12,6 +12,22 @@ describe Disruptor::RingBuffer do
     buffer = Disruptor::RingBuffer.new(6, Disruptor::TestWaitStrategy.new) { event }
     expect(buffer.get(0)).to eq(event)
   end
+
+  it 'returns the number of claimed slots' do
+    buffer = Disruptor::RingBuffer.new(20, Disruptor::TestWaitStrategy.new)
+    5.times { buffer.claim }
+    2.times { |i| buffer.commit(i) }
+    expect(buffer.claimed_count).to eq(3)
+  end
+
+  it 'returns the committed slots count' do
+    buffer = Disruptor::RingBuffer.new(20, Disruptor::TestWaitStrategy.new)
+    5.times do
+      i = buffer.claim
+      buffer.commit(i)
+    end
+    expect(buffer.committed_count).to eq(5)
+  end
 end
 
 describe Disruptor::RingBuffer, 'claim' do
@@ -21,12 +37,6 @@ describe Disruptor::RingBuffer, 'claim' do
     expect(buffer.claim).to eq(0)
     expect(buffer.claim).to eq(1)
     expect(buffer.claim).to eq(2)
-  end
-
-  it 'returns the number of claimed slots' do
-    5.times { buffer.claim }
-    2.times { |i| buffer.commit(i) }
-    expect(buffer.claimed_count).to eq(3)
   end
 end
 
