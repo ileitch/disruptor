@@ -3,7 +3,7 @@ module Disruptor
     INITIAL_VALUE = 0
 
     def initialize(initial = INITIAL_VALUE)
-      @sequence = Atomic.new(initial)
+      @sequence = Concurrent::Atomic.new(initial)
     end
 
     def get

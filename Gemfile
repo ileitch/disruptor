@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
 
 gem 'rake'
-gem 'atomic'
+gem 'concurrent-ruby'
 gem 'rspec'

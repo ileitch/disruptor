@@ -1,10 +1,12 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    atomic (1.1.99)
-    atomic (1.1.99-java)
+    concurrent-ruby (0.8.0)
+      ref (~> 1.0, >= 1.0.5)
+    concurrent-ruby (0.8.0-java)
     diff-lcs (1.2.5)
     rake (10.4.2)
+    ref (1.0.5)
     rspec (3.2.0)
       rspec-core (~> 3.2.0)
       rspec-expectations (~> 3.2.0)
@@ -24,6 +26,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  atomic
+  concurrent-ruby
   rake
   rspec

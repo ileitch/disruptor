@@ -2,7 +2,7 @@ module Disruptor
   class BufferSizeError < StandardError; end
 end
 
-require 'atomic'
+require 'concurrent'
 require 'thread'
 
 require 'disruptor/wait_strategy'
