@@ -11,11 +11,11 @@ module Disruptor
     end
 
     def set(current_seq, new_seq)
-      while !@sequence.compare_and_set(current_seq, new_seq); end
+      until @sequence.compare_and_set(current_seq, new_seq); end
     end
 
     def increment
-      while true
+      loop do
         current_seq = @sequence.get
         next_seq = current_seq + 1
         return current_seq if @sequence.compare_and_set(current_seq, next_seq)

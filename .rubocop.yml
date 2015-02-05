@@ -1,0 +1,8 @@
+LineLength:
+  Enabled: false
+
+Style/SignalException:
+  Enabled: false
+
+Documentation:
+  Enabled: false

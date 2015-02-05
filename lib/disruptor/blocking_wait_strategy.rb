@@ -17,9 +17,7 @@ module Disruptor
     end
 
     def wait_for(cursor, sequence)
-      while cursor.get < sequence
-        @mutex.synchronize { @cond.wait(@mutex) }
-      end
+      @mutex.synchronize { @cond.wait(@mutex) } while cursor.get < sequence
     end
 
     def notify_blocked

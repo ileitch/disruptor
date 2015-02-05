@@ -9,7 +9,7 @@ describe Disruptor::RingBuffer do
 
   it 'accepts a block to preallocate the buffer' do
     event = double
-    buffer = Disruptor::RingBuffer.new(6, Disruptor::TestWaitStrategy.new) { |slot| event }
+    buffer = Disruptor::RingBuffer.new(6, Disruptor::TestWaitStrategy.new) { event }
     expect(buffer.get(0)).to eq(event)
   end
 end
@@ -31,22 +31,22 @@ describe Disruptor::RingBuffer, 'claim' do
 end
 
 describe Disruptor::RingBuffer, 'commit' do
-  let(:wait_strategy) { double(:wait_for => nil, :notify_blocked => nil) }
+  let(:wait_strategy) { double(wait_for: nil, notify_blocked: nil) }
   let(:buffer) { Disruptor::RingBuffer.new(12, wait_strategy) }
-  let(:cursor) { double(:set => nil, :get => Disruptor::RingBuffer::INITIAL_CURSOR_VALUE) }
+  let(:cursor) { double(set: nil, get: Disruptor::RingBuffer::INITIAL_CURSOR_VALUE) }
 
   before do
-    allow(Disruptor::Sequence).to receive_messages(:new => cursor)
+    allow(Disruptor::Sequence).to receive_messages(new: cursor)
   end
 
   it 'waits for the cursor to reach the previous slot' do
-    allow(cursor).to receive_messages(:get => 0)
+    allow(cursor).to receive_messages(get: 0)
     expect(wait_strategy).to receive(:wait_for).with(cursor, 15)
     buffer.commit(16)
   end
 
   it 'sets the cursor to the current slot' do
-    allow(cursor).to receive_messages(:get => 0)
+    allow(cursor).to receive_messages(get: 0)
     expect(cursor).to receive(:set).with(15, 16)
     buffer.commit(16)
   end

@@ -46,7 +46,7 @@ module Disruptor
       @thread.join if @thread
     end
 
-    def process_event(event)
+    def process_event(event) # rubocop:disable Lint/UnusedMethodArgument
       raise NotImplementedError
     end
   end

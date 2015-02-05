@@ -12,7 +12,7 @@ describe Disruptor::Processor do
   end
 
   it 'raises an error when a subclass overrides the setup method' do
-    expect { processor_subclass.define_method(:setup) { } }.to raise_error
+    expect { processor_subclass.define_method(:setup) {} }.to raise_error
   end
 end
 
@@ -26,9 +26,9 @@ describe Disruptor::Processor, 'process_next_sequence' do
   end
 
   let(:event) { double }
-  let(:sequence) { double(:increment => 10 ) }
-  let(:buffer) { double(:get => event) }
-  let(:barrier) { double(:wait_for => nil, :processor_stopping => nil) }
+  let(:sequence) { double(increment: 10) }
+  let(:buffer) { double(get: event) }
+  let(:barrier) { double(wait_for: nil, processor_stopping: nil) }
   let(:processor) { MyProcessor.new }
 
   before { processor.setup(buffer, barrier, sequence) }
@@ -62,14 +62,14 @@ describe Disruptor::Processor, 'stop' do
     c
   end
 
-  let(:buffer) { double(:claim => nil, :set => nil, :commit => nil) }
+  let(:buffer) { double(claim: nil, set: nil, commit: nil) }
   let(:thread) { double }
   let(:processor) { processor_subclass.new }
-  let(:barrier) { double(:processor_stopping => nil) }
+  let(:barrier) { double(processor_stopping: nil) }
 
   before do
     processor.setup(buffer, barrier, nil)
-    allow(Thread).to receive_messages(:new => thread)
+    allow(Thread).to receive_messages(new: thread)
   end
 
   it 'claims a slot in the buffer for the Stop instruction' do
@@ -78,7 +78,7 @@ describe Disruptor::Processor, 'stop' do
   end
 
   it 'adds a Stop instruction into the buffer' do
-    allow(buffer).to receive_messages(:claim => 1)
+    allow(buffer).to receive_messages(claim: 1)
     expect(buffer).to receive(:set).with(1, Disruptor::Processor::Stop)
     processor.stop
   end

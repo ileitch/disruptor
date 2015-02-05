@@ -5,11 +5,11 @@ describe Disruptor::ProcessorPool, 'add' do
   let(:pool) { Disruptor::ProcessorPool.new(buffer, Disruptor::TestWaitStrategy.new) }
   let(:barrier) { double }
   let(:sequence) { double }
-  let(:processor) { double(:setup => nil, :start => nil) }
+  let(:processor) { double(setup: nil, start: nil) }
 
   before do
-    allow(Disruptor::ProcessorBarrier).to receive_messages(:new => barrier)
-    allow(Disruptor::Sequence).to receive_messages(:new => sequence)
+    allow(Disruptor::ProcessorBarrier).to receive_messages(new: barrier)
+    allow(Disruptor::Sequence).to receive_messages(new: sequence)
   end
 
   it 'calls setup on the given processor' do
@@ -26,7 +26,7 @@ end
 describe Disruptor::ProcessorPool, 'drain' do
   let(:buffer) { double }
   let(:pool) { Disruptor::ProcessorPool.new(buffer, Disruptor::TestWaitStrategy.new) }
-  let(:processor) { double(:setup => nil, :start => nil) }
+  let(:processor) { double(setup: nil, start: nil) }
 
   before { pool.add(processor) }
 
